@@ -2,6 +2,14 @@ require 'rubygems'
 require 'scrapi'
 require 'digest/md5'
 require 'net/http'
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.on("-o TEXT") do |b|
+    options[:ofile] = b
+  end
+end.parse!
 
 username = ARGV[0]
 password = Digest::MD5.hexdigest(ARGV[1])
@@ -43,25 +51,26 @@ page_numbers = Enumerator.new do |yielder|
   end
 end
 
-#### get first page
+output = STDOUT
+if !options[:ofile].nil?
+  output = File.new(options[:ofile],'w')
+end
+#### get the pages
 loop do
-  resp, data = http.get("/viewallitems.php?page=#{page_numbers.next()}", headers)
+  page = page_numbers.next()
+  resp, data = http.get("/viewallitems.php?page=#{page}", headers)
   cards = surusu.scrape(data)
   if cards.nil?
     break
   end
+  if !options[:ofile].nil?
+    puts "Finished page #{page}"
+  end
   cards.each do |front, back|
-    puts "#{front.gsub(/\n/,'<br/>')}\t#{back.gsub(/\n/,'<br/>')}"
+    output.puts "#{front.gsub(/\n/,'<br/>')}\t#{back.gsub(/\n/,'<br/>')}"
   end
 end
 
-
-
-
-
-
-
-
-
-
-
+if !options[:ofile].nil?
+  output.close
+end
