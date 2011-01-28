@@ -1,0 +1,3 @@
+== Using Surusu-Export
+
+	ruby surusu-export.rb <username> <password> <deck>
