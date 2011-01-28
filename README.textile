@@ -1,3 +1,17 @@
 h1. Using Surusu-Export
 
 @ruby surusu-export.rb <username> <password> <deck>@
+
+Surusu has a usernamecookie and passwordcookie for establishing the first session. Once we have the PHPSESSIONID, we use that for all other requests.
+
+Surusu uses the session for almost everything, due to this reason, we hit the /switchdeck.php page first to change the deck to the required one.
+
+
+h1. Requirements
+
+* ruby 1.9.1+
+* scrapi gem
+
+h1. TODO
+
+* write output to a file.
